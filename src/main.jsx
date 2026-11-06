@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowDown, ArrowRight, ArrowUpRight, Menu, X, Play, Plus, Mail, Phone, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Menu, X, Play, Pause, Plus, Mail, Phone, ChevronLeft, ChevronRight } from 'lucide-react';
 import { gsap } from './gsap';
 import './styles.css';
 
@@ -126,7 +126,7 @@ function Footer() {
       <section className="footer-card"><h3>Clinic hours</h3><p className="footer-detail">Monday – Saturday<br/><strong>9:00 am – 6:00 pm</strong></p><p className="footer-detail">Sunday<br/><strong>Closed</strong></p></section>
       <section className="footer-card"><h3>Location</h3><p className="footer-detail">American Oncology Institute<br/><strong>Nallagandla, Hyderabad</strong></p><p className="footer-detail"><a href="https://maps.google.com/?q=American+Oncology+Institute+Nallagandla+Hyderabad" target="_blank" rel="noreferrer">View on map <ArrowUpRight size={13}/></a></p></section>
     </div>
-    <div className="footer-wordmark">Dr. R. Srinath Bharadwaj</div>
+    <div className="footer-wordmark"><span>Dr. R. Srinath</span>{' '}<span>Bharadwaj</span></div>
     <div className="footer-bottom"><span>© 2026 Dr. R. Srinath Bharadwaj</span><span className="footer-disclaimer">This website provides general information, not a diagnosis or a substitute for individual medical advice.</span><span>Appointments are confirmed by the clinic.</span></div>
   </div></div></footer>;
 }
@@ -143,17 +143,16 @@ function CareJourneyVisual() {
   </div>;
 }
 function ClinicMediaStrip() {
-  const renderCard = (item, index, duplicate=false) => <figure className={`media-card ${item.type==='video'?'media-card-video':''}`} key={`${duplicate?'copy-':''}${item.title}-${index}`}>
+  const [paused, setPaused] = useState(false);
+  const renderCard = (item, index, duplicate=false) => <figure className={`media-card ${item.type==='video'?'media-card-video':''}`} key={`${duplicate?'copy-':''}${item.title}-${index}`} aria-label={`${item.type==='video'?'Video placeholder: ':''}${item.title}`} aria-hidden={duplicate||undefined}>
     <img src={item.image} alt={duplicate?'':item.alt} loading="lazy"/>
     {item.type==='video'&&<span className="media-play" aria-hidden="true"><Play size={20} fill="currentColor"/></span>}
-    <figcaption><span>{item.type==='video'?item.tag:'Photo'}</span><strong>{item.title}</strong></figcaption>
   </figure>;
-  return <section className="clinic-media" aria-labelledby="clinic-media-title">
-    <div className="section-wrap clinic-media-heading"><p className="section-badge">Inside the care journey</p><h2 id="clinic-media-title">A closer look at care</h2><p className="section-description">A visual introduction to the people, conversations and research behind cancer care.</p></div>
-    <div className="media-marquee" aria-label="Auto-scrolling photos and video previews">
-      <div className="media-track">{mediaHighlights.map((item,index)=>renderCard(item,index))}{mediaHighlights.map((item,index)=>renderCard(item,index,true))}</div>
+  return <section className="clinic-media" aria-label="Clinic photo and video gallery">
+    <div className="media-controls"><button type="button" className="media-motion-toggle" onClick={()=>setPaused(value=>!value)} aria-label={paused?'Play gallery':'Pause gallery'} aria-pressed={paused}>{paused?<Play size={14} fill="currentColor"/>:<Pause size={14} fill="currentColor"/>}</button></div>
+    <div className="media-marquee" role="region" aria-roledescription="carousel" aria-label="Clinic photos and video previews" tabIndex={0}>
+      <div className={`media-track ${paused?'is-paused':''}`}>{mediaHighlights.map((item,index)=>renderCard(item,index))}{mediaHighlights.map((item,index)=>renderCard(item,index,true))}</div>
     </div>
-    <p className="media-placeholder-note">Video cards are placeholders for clinic-approved clips.</p>
   </section>;
 }
 function Testimonials() {
@@ -212,7 +211,7 @@ function App() {
     return () => context.revert();
   }, [reduceMotion]);
   return <><Header/><main ref={mainRef}>
-    <section className="hero" id="home"><div className="hero-inner"><div className="hero-copy"><p className="section-badge hero-badge">Medical oncology</p><h1>Clinical oncology,<br/><em>cancer treatment &amp; research.</em></h1><p className="hero-name">Dr. R. Srinath Bharadwaj</p><p className="credentials">MBBS, MD, DM <span>·</span> Consultant Medical Oncologist</p><p className="hero-description">A cancer diagnosis can bring difficult decisions. Explore areas of care, learn what to bring to a consultation, and contact the clinic to ask about next steps.</p><div className="hero-actions"><Button>Enquire via WhatsApp</Button><a href="#about" className="text-link">About Dr. Bharadwaj <ArrowDown size={15}/></a></div><div className="hero-principles"><span><i>01</i> Evidence-based decisions</span><span><i>02</i> Clear conversations</span></div></div><div className="hero-visual"><img className="hero-portrait" src={doctorPortrait} alt="Dr. R. Srinath Bharadwaj, Consultant Medical Oncologist" fetchPriority="high"/><div className="hero-image-caption"><span className="caption-monogram">SB</span><span><strong>Dr. R. Srinath Bharadwaj</strong><small>Consultant Medical Oncologist</small></span></div></div></div></section>
+    <section className="hero" id="home"><div className="hero-inner"><div className="hero-copy"><p className="section-badge hero-badge">Medical oncology</p><h1>Clinical oncology,<br/><em>cancer treatment &amp; research.</em></h1><p className="hero-name">Dr. R. Srinath Bharadwaj</p><p className="credentials">MBBS, MD, DM <span>·</span> Consultant Medical Oncologist</p><p className="hero-description">A cancer diagnosis can bring difficult decisions. Explore areas of care, learn what to bring to a consultation, and contact the clinic to ask about next steps.</p><div className="hero-actions"><Button>Enquire via WhatsApp</Button><a href="#about" className="text-link">About Dr. Bharadwaj <ArrowDown size={15}/></a></div></div><div className="hero-visual"><img className="hero-portrait" src={doctorPortrait} alt="Dr. R. Srinath Bharadwaj, Consultant Medical Oncologist" fetchPriority="high"/><div className="hero-image-caption"><span className="caption-monogram">SB</span><span><strong>Dr. R. Srinath Bharadwaj</strong><small>Consultant Medical Oncologist</small></span></div></div></div></section>
 
     <ClinicMediaStrip/>
 
